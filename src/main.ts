@@ -1,15 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
-import { MqttModule} from "./app.module";
-
+import { AppModule} from "./app.module";
+//해당 메인파일은 Client의 역할을 함.
+//즉 mqtt서버에 접속해서 메세지를 읽고 전달하는 역할을 하게 됨.
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice(MqttModule, {
+  const app = await NestFactory.createMicroservice(AppModule, {
     transport : Transport.MQTT,
     options: {
-      subscribeOptions: { qos : 1 },
-      url: 'mqtt://broker.hivemq.com',
+      host : 'localhost',
+      port: 1883,
     },
   });
-  await app.listen();
+  app.listen();
 }
-bootstrap();
+bootstrap()
