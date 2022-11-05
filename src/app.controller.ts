@@ -1,8 +1,8 @@
 import {Controller, Inject} from '@nestjs/common';
-//import {AppService} from './app.service';
-import {ClientProxy, Ctx, MessagePattern, MqttContext, Payload as pd} from "@nestjs/microservices";
+import {ClientProxy, Ctx, MessagePattern, MqttContext, Payload,Payload as pd} from "@nestjs/microservices";
 import {take} from "rxjs";
-
+import {AppService} from "./app.service";
+//실제 연동하는 부분으로 메세지를 송신하는 부분
 @Controller()
 export class AppController {
     constructor(@Inject('TEST_CLIENT') private client: ClientProxy) {
@@ -12,16 +12,16 @@ export class AppController {
         }, 3000);
     }
 
-    @MessagePattern('World')//구독하는 주제 1
+    @MessagePattern('World') //구독하는 주제 1
     모두받기(@pd() data) {
         console.log(data);
     }
 
-    @MessagePattern('American')//구독하는 주제 2
+    @MessagePattern('American') //구독하는 주제 2
     고유받기(@pd() data) {
         console.log(data);
     }
-    
+
     // @MessagePattern('ftf-input')
     // sumData(@Payload() payload: number[], @Ctx() context: MqttContext) {
     //     console.log(`---NEW Message ${context.getTopic()}---`);
