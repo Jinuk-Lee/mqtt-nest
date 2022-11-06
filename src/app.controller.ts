@@ -8,7 +8,7 @@ export class AppController {
     constructor(@Inject('TEST_CLIENT') private client: ClientProxy) {
         setInterval(() => { //3초 마다 메세지를 발송하도록 함.
             const data = {sensor_name:'Temperature',location:'N5',value: Math.floor(Math.random()*35)};
-            this.client.send('World', data).pipe(take(2)).subscribe();
+            this.client.send('World', data).pipe(take(2)).subscribe(); //data를 전송할 주제 등록
         }, 3000);
         // setTimeout(() => { //3초 뒤에 메세지를 발송하도록 함.
         //     const data = {number: Math.random(), text: AppController.name};
