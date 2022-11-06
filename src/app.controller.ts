@@ -6,6 +6,7 @@ import {AppService} from "./app.service";
 @Controller()
 export class AppController {
     constructor(@Inject('TEST_CLIENT') private client: ClientProxy) {
+        //Publisher 구현 코드
         setInterval(() => { //3초 마다 메세지를 발송하도록 함.
             const data = {sensor_name:'Temperature',location:'N5',value: Math.floor(Math.random()*35)};
             this.client.send('World', data).pipe(take(2)).subscribe(); //data를 전송할 주제 등록
@@ -15,7 +16,7 @@ export class AppController {
         //     this.client.send('Korean', data).pipe(take(1)).subscribe();
         // }, 3000);
     }
-
+    //Subcriber 구현 코드
     @MessagePattern('World') //구독하는 주제 1
     모두받기(@pd() data) {
         console.log(data);
