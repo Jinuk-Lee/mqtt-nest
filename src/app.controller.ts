@@ -1,4 +1,4 @@
-import {Controller, Inject} from '@nestjs/common';
+import {Controller, Inject, Post} from '@nestjs/common';
 import {ClientProxy, Ctx, MessagePattern, MqttContext, Payload,Payload as pd} from "@nestjs/microservices";
 import {take} from "rxjs";
 import {AppService} from "./app.service";
@@ -6,10 +6,14 @@ import {AppService} from "./app.service";
 @Controller()
 export class AppController {
     constructor(@Inject('TEST_CLIENT') private client: ClientProxy) {
-        setTimeout(() => { //3초 뒤에 메세지를 발송하도록 함.
-            const data = {number: Math.random(), text: AppController.name};
-            this.client.send('Korean', data).pipe(take(1)).subscribe();
+        setInterval(() => { //3초 마다 메세지를 발송하도록 함.
+            const data = {sensor_name:'Temperature',location:'N5',value: Math.floor(Math.random()*35)};
+            this.client.send('World', data).pipe(take(2)).subscribe();
         }, 3000);
+        // setTimeout(() => { //3초 뒤에 메세지를 발송하도록 함.
+        //     const data = {number: Math.random(), text: AppController.name};
+        //     this.client.send('Korean', data).pipe(take(1)).subscribe();
+        // }, 3000);
     }
 
     @MessagePattern('World') //구독하는 주제 1
@@ -21,6 +25,7 @@ export class AppController {
     고유받기(@pd() data) {
         console.log(data);
     }
+
 
     // @MessagePattern('ftf-input')
     // sumData(@Payload() payload: number[], @Ctx() context: MqttContext) {
