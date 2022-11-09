@@ -1,8 +1,9 @@
-import { Controller, Inject } from '@nestjs/common';
+import {Controller, Inject, Post} from '@nestjs/common';
 import {
   ClientProxy,
   MessagePattern,
   Payload as pd,
+    Client
 } from '@nestjs/microservices';
 import { take } from 'rxjs';
 
@@ -11,20 +12,22 @@ import { take } from 'rxjs';
 export class AppController {
   constructor(@Inject('TEST_CLIENT') private client: ClientProxy) {
     //Publisher 구현 코드
+    const Client = require('@nestjs/microservices').Client;
+
     setInterval(() => {
       //3초 마다 메세지를 발송하도록 함.
-      const data = {
+      const message = {
         sensor_name: 'Temperature',
         location: 'N5',
         value: Math.floor(Math.random() * 35),
       };
-      this.client.send('World', data).pipe(take(2)).subscribe(); //data를 전송할 주제 등록
+      this.client.send('smart-green', message).pipe(take(2)).subscribe(); //data를 전송할 주제 등록
     }, 3000);
   }
 
   //Subscriber 구현 코드
   @MessagePattern('smartgreen') //구독하는 주제 1
-  sumData(@pd() message) {
+  sensor_data(@pd() message) {
     const [sName, loc, tmp] = message.toString().split(',');
     const data = {
       sensor_name: sName,
@@ -35,8 +38,8 @@ export class AppController {
     console.log(sensors);
   }
 
-  @MessagePattern('American') //구독하는 주제 2
-  고유받기(@pd() data) {
-    console.log(data);
-  }
+
+  @Post("http://192.168.10.171:8080/api/sensors",){
+
+}
 }
