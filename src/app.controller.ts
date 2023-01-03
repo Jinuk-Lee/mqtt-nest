@@ -1,17 +1,17 @@
-import {Controller, Inject, Post} from '@nestjs/common';
+import { Controller, Inject, Post } from '@nestjs/common';
 import {
   ClientProxy,
   MessagePattern,
   Payload as pd,
-    Client
 } from '@nestjs/microservices';
-import { take } from 'rxjs';
+import { catchError, take } from 'rxjs';
 
 //실제 연동하는 부분으로 메세지를 송신하는 부분
 @Controller()
 export class AppController {
   constructor(@Inject('TEST_CLIENT') private client: ClientProxy) {
     //Publisher 구현 코드
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const Client = require('@nestjs/microservices').Client;
 
     setInterval(() => {
@@ -26,20 +26,29 @@ export class AppController {
   }
 
   //Subscriber 구현 코드
-  @MessagePattern('smartgreen') //구독하는 주제 1
+  @MessagePattern('smart-green') //구독하는 주제 1
   sensor_data(@pd() message) {
+    console.log(message);
     const [sName, loc, tmp] = message.toString().split(',');
     const data = {
       sensor_name: sName,
       location: loc,
       value: tmp,
     };
+
     const sensors = JSON.stringify(data);
-    console.log(sensors);
+
+    //console.log(sensors);
+
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const axios = require('axios');
+    axios
+      .post('http://localhost:3000/user', { sensors })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
-
-
-  @Post("http://192.168.10.171:8080/api/sensors",){
-
-}
 }
