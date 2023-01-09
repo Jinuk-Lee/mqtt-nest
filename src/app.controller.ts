@@ -17,11 +17,14 @@ export class AppController {
     setInterval(() => {
       //3초 마다 메세지를 발송하도록 함.
       const message = {
-        sensor_name: 'Temperature',
+        sensor_name: 'TEMPERATURE',
         location: 'N5',
         value: Math.floor(Math.random() * 35),
       };
-      this.client.send('smart-green', message).pipe(take(2)).subscribe(); //data를 전송할 주제 등록
+      this.client
+        .send('smart-green', JSON.stringify(message))
+        .pipe(take(2))
+        .subscribe(); //data를 전송할 주제 등록
     }, 3000);
   }
 
@@ -35,15 +38,18 @@ export class AppController {
       location: loc,
       value: tmp,
     };
+    const sensor = JSON.stringify(data);
+    console.log(sensor);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
 
-    const sensors = JSON.stringify(data);
-
-    //console.log(sensors);
+    // args.sensor = sensors.toString('utf-8');
+    // console.log(args);
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const axios = require('axios');
     axios
-      .post('http://localhost:3000/user', { sensors })
+      .post('http://192.168.10.171:3000/sensors', { sensor }) //url에 경로 입력
       .then((res) => {
         console.log(res);
       })
